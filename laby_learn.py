@@ -46,7 +46,7 @@ class EnvGrid(object):
         return self.y*6 + self.x + 1
 
     def checkCrossing(self, action):
-        curTab = self.movement[self.x][self.y]
+        curTab = self.movement[self.y][self.x]
         print(curTab)
         print("Choice " + str(action))
 
