@@ -1,9 +1,12 @@
-### Code origiennellement par @Thibault Neveu - https://github.com/thibo73800 
-### Modifié par Claire Perrot - janvier 2021
+### Code origiennellement par @Thibault Neveu - https://github.com/thibo73800
+### Modifié par moi - mars 2021
 
 import numpy as np
 from random import randint
 import random
+
+from sympy.strategies.core import switch
+
 
 class EnvGrid(object):
 
@@ -13,31 +16,57 @@ class EnvGrid(object):
         self.grid = [
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1],
             [0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0]
+            [0, 0, 0, 2, 0, 0]
         ]
 
         # starting position
-        self.st_pos = [0,2]
+        self.st_pos = [0,0]
         self.reset()
 
         self.actions = [
             [-1, 0], # Up
+            [0, 1], # Right
             [1, 0], #Down
-            [0, -1], # Left
-            [0, 1] # Right
+            [0, -1] # Left
         ]
 
         self.movement = [
-            [-1, 0], # Up
-            [1, 0], #Down
-            [0, -1], # Left
-            [0, 1] # Right
+            [[0,1,1,0], [0,1,0,1], [0,1,0,1], [0,1,1,1], [0,1,0,1], [0,0,1,1]], #[haut, droite, bas, gauche]
+            [[1,1,1,0], [0,1,1,1], [0,1,1,1], [1,0,1,1], [0,1,1,0], [1,1,1,1]],
+            [[1,1,1,0], [1,0,1,1], [1,0,1,0], [1,1,0,0], [1,1,1,1], [1,1,1,1]],
+            [[1,0,1,0], [1,1,1,0], [1,1,0,1], [0,1,1,1], [1,1,0,1], [1,1,1,1]],
+            [[1,0,1,0], [1,1,1,0], [0,1,1,1], [1,1,1,1], [0,1,1,1], [1,1,1,1]],
+            [[0,1,1,0], [1,0,0,1], [1,1,0,0], [1,0,1,1], [1,1,0,0], [1,1,1,1]]
         ]
 
     def get_state(self):
-        return self.y*3 + self.x + 1
+        return self.y*6 + self.x + 1
+
+    def checkCrossing(self, action):
+        curTab = self.movement[self.x][self.y]
+        print(curTab)
+        print("Choice " + str(action))
+
+        # if (action == self.actions[0]):
+        #     if (curTab[0] == 0):
+        #         return 0
+        # if (action == self.actions[1]):
+        #     if (curTab[2] == 0):
+        #         return 0
+        # if (action == self.actions[2]):
+        #     if (curTab[3] == 0):
+        #         return 0
+        # if (action == self.actions[3]):
+        #     if (curTab[1] == 0):
+        #         return 0
+
+        if (curTab[action] == 0):
+          return -1
+
+        return 0
 
     def reset(self):
         """
@@ -51,6 +80,11 @@ class EnvGrid(object):
             Action: 0, 1, 2, 3;
             mise a jour de la position + retourne l'état d'arrivée et la récompense
         """
+        r = self.checkCrossing(action)
+
+        if (r == -1) :
+            return self.get_state(), r
+
         self.y = max(0, min(self.y + self.actions[action][0],2))
         self.x = max(0, min(self.x + self.actions[action][1],2))
 
@@ -71,7 +105,7 @@ class EnvGrid(object):
             print("")
 
     def is_finished(self):
-        return self.grid[self.y][self.x] == 1 ## on est arrives au but
+        return self.grid[self.y][self.x] == 2 ## on est arrives au but
 
 def take_action(st, Q, eps):
     # Choisir une action (retourne l'action choisie)
@@ -96,6 +130,33 @@ if __name__ == '__main__':
         [0, 0, 0, 0],
         [0, 0, 0, 0],
         [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
         [0, 0, 0, 0]
     ]
     
@@ -105,23 +166,23 @@ if __name__ == '__main__':
         st = env.get_state()
         
         while not env.is_finished(): ## on est pas encore sur la case finale
-            #env.show()
+            env.show()
             #at = int(input("$>"))
-            action = take_action(st, Q, 0.4)
+            action = take_action(st, Q, 0.8)
 
             stp1, r = env.step(action)
-            #print("s", stp1)
-            #print("r", r)
+            print("s", stp1)
+            print("r", r)
 
             # Mise à jour de la Q-table
             atp1 = take_action(stp1, Q, 0.0)
             Q[st][action] = Q[st][action] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][action])
-
+            print(Q)
             st = stp1
 
     ## affichage de la Q-table finale
     print('     up     down    left   right')
-    for s in range(1, 10):
+    for s in range(1, 36):
         formatted_Q = [ '%.2f' % elem for elem in Q[s] ]
         print(s, formatted_Q)
     
