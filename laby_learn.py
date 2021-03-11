@@ -4,11 +4,94 @@
 import numpy as np
 from random import randint
 import random
+import math
 
 from sympy.strategies.core import switch
 
 
 class EnvGrid(object):
+
+    Q_table_sortie = [
+        [0, 0, 0, 0],  ## pour l'état 0 (n'existe pas)
+        [0, 0, 0, 0],  ## pour l'état 1
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ]
+
+    Q_table_tresor1 = [
+        [0, 0, 0, 0],  ## pour l'état 0 (n'existe pas)
+        [0, 0, 0, 0],  ## pour l'état 1
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]
+    ]
+
+    searchExit = False
 
     def __init__(self):
         super(EnvGrid, self).__init__()
@@ -50,23 +133,23 @@ class EnvGrid(object):
         print(curTab)
         print("Choice " + str(action))
 
-        # if (action == self.actions[0]):
-        #     if (curTab[0] == 0):
-        #         return 0
-        # if (action == self.actions[1]):
-        #     if (curTab[2] == 0):
-        #         return 0
-        # if (action == self.actions[2]):
-        #     if (curTab[3] == 0):
-        #         return 0
-        # if (action == self.actions[3]):
-        #     if (curTab[1] == 0):
-        #         return 0
-
         if (curTab[action] == 0):
           return -1
 
         return 0
+
+    def check_treasure(self):
+        if (self.searchExit == False):
+            coor = [(index, row.index(1)) for index, row in enumerate(self.grid) if 1 in row]
+            for co in coor:
+                print(co[0], " cehrché et x current = ", self.x)
+                print(co[1], " cehrché et y current = ", self.y)
+                if co[0] == self.x and co[1] == self.y:
+                    self.searchExit = True
+                    return self.Q_table_sortie
+                else:
+                    return self.Q_table_tresor1
+        return self.Q_table_sortie
 
     def reset(self):
         """
@@ -118,55 +201,22 @@ def take_action(st, Q, eps):
 
 if __name__ == '__main__':
     env = EnvGrid()
+    a = env.check_treasure()
+    print(a)
+
+    env = EnvGrid()
     env.reset()
     st = env.get_state()
 
-    Q = [
-        [0, 0, 0, 0], ## pour l'état 0 (n'existe pas)
-        [0, 0, 0, 0], ## pour l'état 1
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ]
-    
     for _ in range(20):
         # Reset
         env.reset()
         st = env.get_state()
         
         while not env.is_finished(): ## on est pas encore sur la case finale
+
+            Q = env.check_treasure()
+
             env.show()
             #at = int(input("$>"))
             action = take_action(st, Q, 0.8)
@@ -177,23 +227,35 @@ if __name__ == '__main__':
 
             # Mise à jour de la Q-table
             atp1 = take_action(stp1, Q, 0.0)
-            Q[st][action] = Q[st][action] + 0.1*(r + 0.9*Q[stp1][atp1] - Q[st][action])
-            print(Q)
+            if (env.searchExit == False):
+                env.Q_table_sortie[st][action] = env.Q_table_sortie[st][action] + 0.1*(r + 0.9*env.Q_table_sortie[stp1][atp1] - env.Q_table_sortie[st][action])
+                print(env.Q_table_sortie)
+            else:
+                env.Q_table_tresor1[st][action] = env.Q_table_tresor1[st][action] + 0.1 * (r + 0.9 * env.Q_table_tresor1[stp1][atp1] - env.Q_table_tresor1[st][action])
+                print(env.Q_table_tresor1)
+
             st = stp1
+
 
     ## affichage de la Q-table finale
     print('     up     down    left   right')
     for s in range(1, 36):
-        formatted_Q = [ '%.2f' % elem for elem in Q[s] ]
+        formatted_Q = [ '%.2f' % elem for elem in env.Q_table_sortie[s] ]
         print(s, formatted_Q)
-    
+
+    env.searchExit = False
+
     ## affichage de la policy finale apprise et du nombre d'étapes
     env.reset()
     s = env.get_state()
     print("starting state", s)
     nb_steps = 0
     while not env.is_finished():
-        a = take_action(s,Q,0.0)
+        Q = env.check_treasure()
+        if (env.searchExit == False):
+            a = take_action(s,env.Q_table_sortie,0.0)
+        else:
+            a = take_action(s, env.Q_table_tresor1, 0.0)
         next_state, reward = env.step(a)
         print("state", next_state)
         s = next_state
