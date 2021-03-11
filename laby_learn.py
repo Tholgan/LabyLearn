@@ -85,8 +85,9 @@ class EnvGrid(object):
         if (r == -1) :
             return self.get_state(), r
 
-        self.y = max(0, min(self.y + self.actions[action][0],2))
-        self.x = max(0, min(self.x + self.actions[action][1],2))
+        self.y = max(0, min(self.y + self.actions[action][0],5))
+        self.x = max(0, min(self.x + self.actions[action][1],5))
+
 
         return self.get_state(), self.grid[self.y][self.x]
 
